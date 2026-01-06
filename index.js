@@ -8,7 +8,6 @@ const unzipper = require('unzipper');
 // ADMIN UPLOAD ZIP DB
 // ======================
 const ZIP_TEMP_PATH = path.join(__dirname, 'upload.zip');
-const DB_PATH = path.join(__dirname, 'data.json');
 
 let waitingZipAdmin = new Set();
 
