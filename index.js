@@ -2,6 +2,40 @@
 const { Telegraf, Markup } = require('telegraf');
 const fs = require('fs');
 const path = require('path'); // kalau belum ada
+// DB di file JSON
+const DB_PATH = path.join(__dirname, 'data.json');
+let db = { users: {} };
+
+function loadDb() {
+  try {
+    if (fs.existsSync(DB_PATH)) {
+      const raw = fs.readFileSync(DB_PATH, 'utf8');
+      db = JSON.parse(raw || '{}');
+      if (!db.users) db.users = {};
+    } else {
+      db = { users: {} };
+      saveDb();
+    }
+  } catch (err) {
+    console.error('Gagal load DB, gunakan baru:', err.message);
+    db = { users: {} };
+  }
+}
+
+function saveDb() {
+  try {
+    fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Gagal save DB:', err.message);
+  }
+}
+
+loadDb();
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const unzipper = require('unzipper');
 
 // ======================
@@ -160,40 +194,6 @@ let BOT_USERNAME = null;
     console.error('Gagal memuat username bot:', e.message);
   }
 })();
-
-// DB di file JSON
-const DB_PATH = path.join(__dirname, 'data.json');
-let db = { users: {} };
-
-function loadDb() {
-  try {
-    if (fs.existsSync(DB_PATH)) {
-      const raw = fs.readFileSync(DB_PATH, 'utf8');
-      db = JSON.parse(raw || '{}');
-      if (!db.users) db.users = {};
-    } else {
-      db = { users: {} };
-      saveDb();
-    }
-  } catch (err) {
-    console.error('Gagal load DB, gunakan baru:', err.message);
-    db = { users: {} };
-  }
-}
-
-function saveDb() {
-  try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Gagal save DB:', err.message);
-  }
-}
-
-loadDb();
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 // ======================
 // Broadcast helper
